@@ -21,7 +21,7 @@ class WeatherRepositoryImpl @Inject constructor(
     private val dao: WeatherDao
 ) : WeatherRepository {
 
-    private val apiKey = "f3a14d199f9cb13a988ce43e5a01c87b"
+    private val apiKey = "API_KEY"
 
     override fun getWeatherByCity(cityName: String): Flow<Resource<Weather>> = flow {
         emit(Resource.Loading())
