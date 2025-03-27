@@ -24,7 +24,8 @@ class WeatherViewModel @Inject constructor(
     val searchQuery: State<String> = _searchQuery
 
     init {
-        loadLastSearchedWeather()
+        // Start with a default city
+        getWeatherForCity("London")
     }
 
     fun onSearchQueryChange(query: String) {
@@ -62,16 +63,5 @@ class WeatherViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
-    }
-
-    private fun loadLastSearchedWeather() {
-        viewModelScope.launch {
-            repository.getLastSearchedWeather().collect { weather ->
-                if (weather != null) {
-                    _state.value = WeatherState(weather = weather)
-                    _searchQuery.value = weather.cityName
-                }
-            }
-        }
     }
 }

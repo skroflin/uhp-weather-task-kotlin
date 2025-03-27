@@ -9,7 +9,6 @@ import com.example.weatherapp.domain.model.Weather
 import com.example.weatherapp.domain.repository.WeatherRepository
 import com.example.weatherapp.util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
@@ -21,35 +20,33 @@ class WeatherRepositoryImpl @Inject constructor(
     private val dao: WeatherDao
 ) : WeatherRepository {
 
-    private val apiKey = "f3a14d199f9cb13a988ce43e5a01c87b"
+    private val apiKey = "API_KEY"
 
     override fun getWeatherByCity(cityName: String): Flow<Resource<Weather>> = flow {
         emit(Resource.Loading())
 
-        val localWeather = try {
-            dao.getWeatherByCityName(cityName).first()?.toWeather()
-        } catch (e: Exception) {
-            null
-        }
-
         try {
+            // Fetch fresh data from API
             val remoteWeather = api.getWeatherByCity(
                 cityName = cityName,
                 apiKey = apiKey
             ).toWeather()
 
+            // Save to database
             dao.insertWeather(remoteWeather.toWeatherEntity())
 
             emit(Resource.Success(remoteWeather))
         } catch (e: HttpException) {
             emit(Resource.Error(
-                message = "An error occurred: ${e.localizedMessage}",
-                data = localWeather
+                message = "An error occurred: ${e.localizedMessage}"
             ))
         } catch (e: IOException) {
             emit(Resource.Error(
-                message = "Couldn't reach server. Check your internet connection.",
-                data = localWeather
+                message = "Couldn't reach server. Check your internet connection."
+            ))
+        } catch (e: Exception) {
+            emit(Resource.Error(
+                message = "An unexpected error occurred: ${e.message}"
             ))
         }
     }
