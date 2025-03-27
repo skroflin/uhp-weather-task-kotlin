@@ -26,13 +26,11 @@ class WeatherRepositoryImpl @Inject constructor(
         emit(Resource.Loading())
 
         try {
-            // Fetch fresh data from API
             val remoteWeather = api.getWeatherByCity(
                 cityName = cityName,
                 apiKey = apiKey
             ).toWeather()
 
-            // Save to database
             dao.insertWeather(remoteWeather.toWeatherEntity())
 
             emit(Resource.Success(remoteWeather))
