@@ -9,7 +9,6 @@ import com.example.weatherapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +23,6 @@ class WeatherViewModel @Inject constructor(
     val searchQuery: State<String> = _searchQuery
 
     init {
-        // Start with a default city
         getWeatherForCity("London")
     }
 
